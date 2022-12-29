@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    command: uvicorn main:app --reload
+    volumes:
+      - .:/fastapi_dweeter
+    ports:
+      - 8000:8000
+    env_file:
+      - .envs/.env
+    depends_on:
+      - dweeter_db
+
+
+  dweeter_db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=dweeter_admin
+      - POSTGRES_PASSWORD=qwerty12345
+      - POSTGRES_DB=dweeter_db
+
+
+volumes:
+  postgres_data:
