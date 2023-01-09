@@ -18,10 +18,8 @@ services:
     image: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=dweeter_admin
-      - POSTGRES_PASSWORD=qwerty12345
-      - POSTGRES_DB=dweeter_db
+    env_file:
+      - .envs/.env
     networks:
       - default
       - service-proxy
