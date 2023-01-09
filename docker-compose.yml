@@ -3,7 +3,7 @@ version: '3.9'
 services:
   web:
     build: .
-    command: uvicorn main:app --reload
+    command: uvicorn main:app --host 0.0.0.0  --reload
     volumes:
       - .:/fastapi_dweeter
     ports:
@@ -22,7 +22,12 @@ services:
       - POSTGRES_USER=dweeter_admin
       - POSTGRES_PASSWORD=qwerty12345
       - POSTGRES_DB=dweeter_db
+    networks:
+      - default
+      - service-proxy
 
+networks:
+  service-proxy:
 
 volumes:
   postgres_data:
