@@ -15,7 +15,7 @@ router = APIRouter()
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='/login/token')
 
 
-async def authenticate_user(username: str, password: str, db: Session):
+def authenticate_user(username: str, password: str, db: Session):
     user = get_user(username=username, db=db)
     if not user:
         return False
@@ -39,7 +39,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 
-async def get_current_user_form_token(token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
+def get_current_user_form_token(token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail=f'Could not validate credentials'

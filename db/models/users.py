@@ -13,17 +13,16 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
-    jobs = relationship("Job", back_populates="owner")
     dweets = relationship('Dweet', back_populates="author")
-    profile = relationship('FollowModel', back_populates='user')
-    following = relationship('FollowModel', back_populates='following')
+    # profile = relationship('FollowModel', back_populates='follower')
+    # following = relationship('FollowModel', back_populates='following')
 
 
 class FollowModel(Base):
     id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
-    user = relationship('User', back_populates='profile')
+    follower_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
+    follower = relationship(User, backref='follower', foreign_keys=[follower_id])
 
-    following_id = Column(Integer, ForeignKey('User', ondelete='CASCADE'))
-    following = relationship('User', back_populates='following')
+    following_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
+    following = relationship(User, backref='following', foreign_keys=[following_id])

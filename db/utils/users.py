@@ -25,12 +25,16 @@ def get_users(db: Session):
 
 
 def get_profile(current_user, db: Session):
-    profile = db.query(User).get(id=current_user.id)
+    profile = db.query(User).filter(User.id == current_user.id).first()
     return profile
 
 
-def follow_user(follow: Follow_Schema, user_id: int,db: Session):
-    follow_object = FollowModel(user_id=user_id, following_id=follow)
+def follow_user(follow: Follow_Schema, user_id: int, db: Session):
+    check = db.query(FollowModel).filter(FollowModel.following_id == follow.dict()['following_id'],
+                                         FollowModel.follower_id == user_id).first()
+    if check:
+        return 0
+    follow_object = FollowModel(**follow.dict(), follower_id=user_id)
     db.add(follow_object)
     db.commit()
     db.refresh(follow_object)
@@ -38,19 +42,26 @@ def follow_user(follow: Follow_Schema, user_id: int,db: Session):
 
 
 def get_following_users(current_user, db: Session):
-    following_users = db.query(FollowModel).filter(user_id=current_user)
+    following_users = db.query(FollowModel).filter(FollowModel.follower_id == current_user.id).all()
     return following_users
 
 
 def get_follow_object(id: int, current_user, db: Session):
-    follow_object = db.query(FollowModel).filter(user_id=current_user.id, following_id=id).first()
+    follow_object = db.query(FollowModel).filter(FollowModel.follower_id == current_user.id,
+                                                 FollowModel.following_id == id).first()
     return follow_object
 
 
 def delete_follow_object(id: int, current_user, db: Session):
-    follow_object = db.query(FollowModel).filter(user_id=current_user.id, following_id=id)
-    if not follow_object:
+    follow_object = db.query(FollowModel).filter(FollowModel.follower_id == current_user.id,
+                                                 FollowModel.following_id == id)
+    if not follow_object.first():
         return 0
-    follow_object.delete(synchronize_session=FollowModel)
+    follow_object.delete(synchronize_session=False)
     db.commit()
     return 1
+
+
+def get_user_by_email(email: str, db: Session):
+    user = db.query(User).filter(User.email == email).first()
+    return user
