@@ -26,7 +26,7 @@ def start_application():
                        allow_headers=["*"])
     include_router(app)
     configure_static(app)
-    # create_tables()
+    create_tables()
     return app
 
 
