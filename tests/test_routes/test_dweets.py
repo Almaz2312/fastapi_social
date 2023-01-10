@@ -33,10 +33,7 @@ def test_unfollow(client, normal_user_token_headers):
     data = {'following_id': 2}
     client.post('/dweets/follow/', json=data, headers=normal_user_token_headers)
     response = client.delete('/dweets/unfollow/2/', headers=normal_user_token_headers)
-    print(response.json())
     user_cr = client.get('/accounts/profile_list/')
-    print(user_cr.json())
     dw = client.get('/dweets/follow/', headers=normal_user_token_headers)
-    print(dw.json())
     assert response.status_code == 200
     assert response.json()['msg'] == 'You have unfollowed user id 2'
